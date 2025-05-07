@@ -1,0 +1,37 @@
+Zadania do wykonania:
+
+1. Działające API dla kart Yu-Gi-Oh :
+ - zapytanie /api/cards powinno zwracać wszystkie karty w formacie JSON ✅
+ - zapytanie /api/cards/name/:name powinno zwracać konkretną kartę o którą prosi użytkownik ✅
+ - zapytanie /api/cards/id/:id powinno zwracać kartę z konkretnym ID ✅
+ - zapytanie /api/cards/type/:type powinno zwracać dany typ karty ✅
+ - zapytanie /api/cards/frameType/:frameType powinno zwracać frameType karty ✅
+ - zapytanie /api/cards/race/:race powinno zwracać karty z danym race ✅
+
+
+
+
+
+
+2. Możliwe typy zapytań :
+ - name (pełna nazwa krty)
+ - fname (częściowa nazwa karty)
+ - id (id karty)
+ - type (Normal Monster, Effect Monster, Synchro Monster, Spell Card, Trap Card, Token itp.)
+ - frameType (spell, trap, normal, effect, )
+
+
+ - atk (atk kart jeśli posiada)
+ - def (def kart jeśli posiada)
+ - lvl (lvl kart jeśli posiada)
+
+
+ - race (dla spell i trapów : Field, Continous, Counter, Quick-play)
+ - attribute (Light, Dark, Fire, Water itp.)
+ - link (lvl linku)
+ - linkMarker (kierunek linku)
+ - scale (lvl skali)
+ - archetype (archetyp jeśli posiada)
+ - banlist (Forbidden - nie można używać, Limited - 1 kopia, SemiLimited - 2)
+ - format (np speed duel, duel links itp.)
+ - 
