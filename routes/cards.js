@@ -55,18 +55,47 @@ router.get("/cards/search", (req, res) => {
     "=": (a, b) => a == b,
   };
 
+  // const parseFilter = (key, value, cardValue) => {
+  //   const match = value.match(/(>=|<=|>|<|=)?(.+)/);
+  //   if (!match) return false;
+
+  //   const [, op = "=", rawVal] = match;
+  //   const parsedFilterVal = isNaN(rawVal)
+  //     ? rawVal.toLowerCase()
+  //     : Number(rawVal);
+  //   const parsedCardVal = isNaN(cardValue)
+  //     ? cardValue.toString().toLowerCase()
+  //     : Number(cardValue);
+
+  //   if (
+  //     typeof parsedCardVal === "number" &&
+  //     typeof parsedFilterVal === "number"
+  //   ) {
+  //     return operators[op](parsedCardVal, parsedFilterVal);
+  //   }
+
+  //   // Tekstowe porównanie (fragment + nieczułe na wielkość liter)
+  //   return parsedCardVal.includes(parsedFilterVal);
+  // };
+
   const parseFilter = (key, value, cardValue) => {
     const match = value.match(/(>=|<=|>|<|=)?(.+)/);
     if (!match) return false;
 
     const [, op = "=", rawVal] = match;
+
+    // Wartości tekstowe i numeryczne – oba sprowadzamy do porównywalnego formatu
     const parsedFilterVal = isNaN(rawVal)
       ? rawVal.toLowerCase()
       : Number(rawVal);
+
+    if (cardValue === undefined || cardValue === null) return false;
+
     const parsedCardVal = isNaN(cardValue)
       ? cardValue.toString().toLowerCase()
       : Number(cardValue);
 
+    // Liczby – porównaj operatorem
     if (
       typeof parsedCardVal === "number" &&
       typeof parsedFilterVal === "number"
@@ -74,8 +103,8 @@ router.get("/cards/search", (req, res) => {
       return operators[op](parsedCardVal, parsedFilterVal);
     }
 
-    // Tekstowe porównanie (fragment + nieczułe na wielkość liter)
-    return parsedCardVal.includes(parsedFilterVal);
+    // Tekstowe porównanie – dokładne dopasowanie, nie fragment!
+    return parsedCardVal === parsedFilterVal;
   };
 
   let filteredCards = cards.data.filter((card) => {
