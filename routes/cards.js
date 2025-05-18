@@ -85,27 +85,38 @@ router.get("/cards/search", (req, res) => {
     const [, op = "=", rawVal] = match;
 
     // Wartości tekstowe i numeryczne – oba sprowadzamy do porównywalnego formatu
-    const parsedFilterVal = isNaN(rawVal)
-      ? rawVal.toLowerCase()
-      : Number(rawVal);
+  const parseFilter = (key, value, cardValue) => {
+  const match = value.match(/(>=|<=|>|<|=)?(.+)/);
+  if (!match) return false;
 
-    if (cardValue === undefined || cardValue === null) return false;
+  const [, op = "=", rawVal] = match;
 
-    const parsedCardVal = isNaN(cardValue)
-      ? cardValue.toString().toLowerCase()
-      : Number(cardValue);
+  const parsedFilterVal = isNaN(rawVal)
+    ? rawVal.toLowerCase()
+    : Number(rawVal);
 
-    // Liczby – porównaj operatorem
-    if (
-      typeof parsedCardVal === "number" &&
-      typeof parsedFilterVal === "number"
-    ) {
-      return operators[op](parsedCardVal, parsedFilterVal);
-    }
+  if (cardValue === undefined || cardValue === null) return false;
 
-    // Tekstowe porównanie – dokładne dopasowanie, nie fragment!
-    return parsedCardVal === parsedFilterVal;
-  };
+  const parsedCardVal = isNaN(cardValue)
+    ? cardValue.toString().toLowerCase()
+    : Number(cardValue);
+
+  // 👉 SPECIAL CASE: allow partial name match
+  if (key === "name" && typeof parsedCardVal === "string") {
+    return parsedCardVal.includes(parsedFilterVal);
+  }
+
+  // Liczby – porównaj operatorem
+  if (
+    typeof parsedCardVal === "number" &&
+    typeof parsedFilterVal === "number"
+  ) {
+    return operators[op](parsedCardVal, parsedFilterVal);
+  }
+
+  // Standardowe porównanie tekstowe – dokładne dopasowanie
+  return parsedCardVal === parsedFilterVal;
+};
 
   let filteredCards = cards.data.filter((card) => {
     return Object.entries(filters).every(([key, value]) => {
