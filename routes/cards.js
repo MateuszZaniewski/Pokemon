@@ -116,7 +116,9 @@ router.get("/cards/search", (req, res) => {
   );
 
   let filteredCards = cards.data.filter((card) => {
-    return activeFilters.every(([key, value]) => {
+    return Object.entries(filters).every(([key, value]) => {
+      if (!value) return true; // ignoruj pusty filtr
+
       const cardValue = card[key];
       if (cardValue === undefined || cardValue === null) return false;
 
