@@ -4,7 +4,40 @@ const router = express.Router();
 
 // zwraca wszystkie karty
 router.get("/cards", (req, res) => {
-  res.json(cards);
+  let { limit, offset, sort, order = "asc" } = req.query;
+
+  limit = limit ? parseInt(limit, 10) : null;
+  offset = offset ? parseInt(offset, 10) : 0;
+
+  let allCards = [...cards.data];
+
+  // Sortowanie (opcjonalne)
+  if (sort) {
+    allCards.sort((a, b) => {
+      const aVal = a[sort];
+      const bVal = b[sort];
+
+      if (aVal === undefined || bVal === undefined) return 0;
+
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return order === "desc"
+          ? bVal.localeCompare(aVal)
+          : aVal.localeCompare(bVal);
+      } else {
+        return order === "desc" ? bVal - aVal : aVal - bVal;
+      }
+    });
+  }
+
+  // Paginacja
+  const paginatedCards = limit
+    ? allCards.slice(offset, offset + limit)
+    : allCards;
+
+  res.json({
+    total: allCards.length,
+    data: paginatedCards,
+  });
 });
 
 // wyszukiwanie kart po wielu parametrach jednocześnie
